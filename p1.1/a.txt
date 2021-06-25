@@ -1,0 +1,49 @@
+int translate_num(long int *output, const char *str, long int lower_bound,
+                  long int upper_bound) {
+    /*define variable*/
+    long result;
+    char *endptr;
+    /*long range = *output;*/
+    /*hex*/
+    char *h1 = "0x";
+    char *h2 = "0X";
+    if (!str)
+        return -1;
+
+    /*result = 0xFFFFFFFF - (result & (~(1 << 31)));*/
+    if (strstr(str, h1) || strstr(str, h2)) {
+        result = strtol(str, &endptr, 16);
+        /*result = 0xFFFFFFFF - (result & (~(1 << 31)));*/
+        if (*endptr != '\0')
+            return -1;
+        /*if (result < 0 || result > upper_bound - lower_bound) {*/
+        /*result = 0xFFFFFFFF - (result & (~(1 << 31)));*/
+        /* if (((result >> 31) & 1) == 1) {
+             result = -((0xFFFFFFFF - result) + 1);
+             if (result < lower_bound || result > upper_bound)
+                 return -1;
+         } else
+             return -1;
+     }*/
+        /*result = 0xFFFFFFFF - (result & (~(1 << 31)));*/
+
+        /*result = 0xFFFFFFFF - (result & (~(1 << 31)));*/
+        if (((result >> 31) & 1) == 1)
+            result = -((0xFFFFFFFF - result) + 1);
+        else if (((result >> (20 - 1)) & 1) == 1)
+            result = -((0xFFFFF - result) + 1);
+        else if (((result >> (12 - 1)) & 1) == 1)
+            result = -((0xFFF - result) + 1);
+    } else {
+        result = strtol(str, &endptr, 10);
+        if (*endptr != '\0')
+            return -1;
+        if (*output == 20 && ((result >> (20 - 1)) & 1) == 1)
+            result = -((0xFFFFF - result) + 1);
+    }
+    if (result < lower_bound || result > upper_bound) {
+        return -1;
+    }
+    *output = result; /*may change to strtol(str, &endptr, 0)*/
+    return 0;
+}
